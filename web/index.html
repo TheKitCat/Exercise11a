@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hospital</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+    </head>
+    <body style="font-family: 'Indie Flower', cursive;">
+        <div style="background-image: url('lego.jpg'); background-repeat:no-repeat; background-position: right top; background-size: 20% auto; position:relative; width:600px;height:400px; margin-left:auto; margin-right:auto;">
+
+            <h1 id="header" style="position:relative; text-align:center; margin-top:3px; top:3%;">Patient Management</h1>
+
+            <form style="position:relative; width:40%; height:20%; margin-left:auto; margin-right:auto; top:3%;">
+                <label style="position:relative; float:left; ">Name:</label>
+                <input id="name" type="text" name="name" value="Test" style="position:relative; float:right; margin: 0px 0px 5px 0px">
+                <label style="position:relative; float:left; clear:both;">Height:</label>
+                <input id="height" type="text" name="height" value="1.65" style="position:relative; float:right; margin: 0px 0px 5px 0px">
+                <label style="position:relative; float:left; clear:both;">Weight:</label>
+                <input id="weight" type="text" name="weight" value="65.00" style="position:relative; float:right; margin: 0px 0px 5px 0px">          
+            </form>
+
+            <div style="position:relative;top:3%; width:50%; margin-left: auto; margin-right:auto;">
+                <button type="button" style="position:relative; left:30%;" onclick="return calc_bmi();">BMI!</button>
+                <button type="button" style="position:relative; left:30%;" onclick="return get_bmis();">All BMIs!</button>
+            </div>
+
+            <div style="position:relative; left:5%; width:500px; top:5%;">
+                <p  id="result" style="position: relative; text-align: center; font-size: 10pt; top:15%;"></p>
+            </div>
+
+            <div id="logging" style="position:relative; left:10%; width:700px; top:15%;">
+            </div>
+            <p style="position: relative; text-align: center; font-size: 10pt; top:15%;">&copy HS Fulda, Middleware Lecture, For Demonstration Purpose Only</p>
+            <script>
+                /**
+                 * Function to calculate the total amount. Calls the backend for this.
+                 * @returns void
+                 */
+                function calc_bmi() {
+                    var name = $("#name").val();
+                    var height = $("#height").val();
+                    var weight = $("#weight").val();
+
+                    //send values via post request to the backend
+                    $.post("http://localhost:8081/Exercise11/Calculation", {name: name, weight: weight, height: height})
+                            .done(function (data) {
+                                $("#result").text(data);
+
+                            });
+                }
+
+                function get_bmis() {
+                $("#logging").empty(); //remove old records
+                $.post("http://localhost:8080/", {})
+                        .done(function (data) {
+                  
+                        for (var i = 0; i < data.length; i++){
+                            var name = data[i].patient;
+                            var date = data[i].date;
+                            var height = data[i].height;
+                            var weight = data[i].weight;
+                            var bmi = data[i].bmi;
+                            $("#logging").append("<p> NAME: " + name + ", DATE: " + date + ", HEIGHT: " + height + ",WEIGHT: " + weight + ", BMI:" + bmi + "</p>");
+                        }
+                        
+                        });
+                }
+
+            </script>
+    </body>
+</html>
